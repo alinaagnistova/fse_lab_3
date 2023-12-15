@@ -8,11 +8,8 @@ import java.util.List;
 //
 @RestController
 public class SessionUserController {
-
     private final SesssionUserService service;
-
     @Autowired
-
     public SessionUserController(SesssionUserService service) {
         this.service = service;
     }

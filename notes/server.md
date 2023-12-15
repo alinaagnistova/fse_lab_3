@@ -1,0 +1,3 @@
+- [Spring Boot Docker](https://spring.io/guides/topicals/spring-boot-docker/)
+- [Deploy Spring Boot Applications for NGINX on Ubuntu 22.04](https://www.linode.com/docs/guides/how-to-deploy-spring-boot-applications-nginx-ubuntu-22-04/)
+- [Deploy Spring Boot Project On Ubuntu Server](https://medium.com/@avijitbarua/deploy-springboot-project-on-ubuntu-server-at-digitalocean-48d372f964e)
