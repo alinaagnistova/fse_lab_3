@@ -11,35 +11,34 @@ import ru.cosmosway.web04.entitiesDTO.CoordinatesDTO;
 import ru.cosmosway.web04.exception.CoordinatesOutOfBoundsException;
 import ru.cosmosway.web04.exception.EmptyCoordinateException;
 import ru.cosmosway.web04.exception.SessionUserNotFoundException;
-//import ru.cosmosway.web04.exceptions.CoordinatesOutOfBoundsException;
-//import ru.cosmosway.web04.exceptions.EmptyCoordinateException;
-//import ru.cosmosway.web04.exceptions.OwnerNotFoundException;
-//import ru.cosmosway.web04.services.areaChecker.AreaChecker;
-//import ru.cosmosway.web04.services.areaChecker.CheckerBuilder;
-//import ru.cosmosway.web04.services.coordinatesValidator.CoordinatesValidator;
+import ru.cosmosway.web04.exception.CoordinatesOutOfBoundsException;
+import ru.cosmosway.web04.exception.EmptyCoordinateException;
+import ru.cosmosway.web04.exception.SessionUserNotFoundException;
+import ru.cosmosway.web04.services.areaChecker.AreaChecker;
+import ru.cosmosway.web04.services.areaChecker.CheckerBuilder;
+import ru.cosmosway.web04.services.coordinatesValidator.CoordinatesValidator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Log
 @Service
 public class RequestService {
     private final SesssionUserService service;
-//    private final AreaChecker areaChecker;
-//    private final CoordinatesValidator coordinatesValidator;
+    private final AreaChecker areaChecker;
+    private final CoordinatesValidator coordinatesValidator;
 
     public RequestService(SesssionUserService service
-//            , CheckerBuilder checkerBuilder, CoordinatesValidator coordinatesValidator
+            , CheckerBuilder checkerBuilder, CoordinatesValidator coordinatesValidator
     ) {
-//        this.areaChecker = checkerBuilder
-//                .initAreaChecker()
-//                .addSquare1Quoter()
-//                .addCircleIn3Quoter()
-//                .addTriangleIn4Quoter()
-//                .getChecker();
+        this.areaChecker = checkerBuilder
+                .initAreaChecker()
+                .addSquare1Quoter()
+                .addCircleIn3Quoter()
+                .addTriangleIn4Quoter()
+                .getChecker();
         this.service = service;
-//        this.coordinatesValidator = coordinatesValidator;
+        this.coordinatesValidator = coordinatesValidator;
     }
 
     public List<RequestDTO> getAllRequests() {
@@ -55,11 +54,10 @@ public class RequestService {
     public RequestDTO addRequest(CoordinatesDTO coords) throws EmptyCoordinateException, CoordinatesOutOfBoundsException, SessionUserNotFoundException
 {
         try {
-//            coordinatesValidator.validate(coords); //if validation fails throws exceptions
+            coordinatesValidator.validate(coords); //if validation fails throws exceptions
             //update user by extra attempt
             Request newRequest = new Request(new Coordinates(coords.getX(), coords.getY(), coords.getR())
-//                    , areaChecker.check(coords)
-                    , true
+                    , areaChecker.check(coords)
             );
             SesssionUser newRequestUser = service.getUser(getCurrentUserLogin()); //un(log in) users can't addAttempts
             newRequest.setUser(newRequestUser);

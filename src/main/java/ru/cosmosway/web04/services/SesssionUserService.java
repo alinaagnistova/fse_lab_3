@@ -30,7 +30,9 @@ public class SesssionUserService implements UserDetailsService {
 //    private final BCryptPasswordEncoder passwordEncoder; //FIXME this field needed only for tests
 
     @Autowired
-    public SesssionUserService(SessionUserRepository repository) {
+    public SesssionUserService(SessionUserRepository repository
+//            , BCryptPasswordEncoder passwordEncoder
+    ) {
         this.repository = repository;
 //        this.passwordEncoder = passwordEncoder;
     }

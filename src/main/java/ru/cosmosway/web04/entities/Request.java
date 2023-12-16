@@ -59,7 +59,7 @@ public class Request {
                 "; r=" + coordinates.getR() +
                 "), areaIntersection=" + areaIntersection +
                 ", id=" + id +
-                ", owner isn't null=" + (Objects.nonNull(user)) +
+                ", user isn't null=" + (Objects.nonNull(user)) +
                 " " + System.currentTimeMillis() +
                 '}';
     }
