@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.cosmosway.web04.entities.SesssionUser;
 import ru.cosmosway.web04.services.SesssionUserService;
 import java.util.List;
-//
+
 @RestController
 public class SessionUserController {
     private final SesssionUserService service;
@@ -27,7 +27,7 @@ public class SessionUserController {
     // Single item
     @GetMapping("/users/{login}")
     SesssionUser getUser(@PathVariable String login) {
-        return service.getUser(login).orElseThrow();
+        return service.getUser(login);
     }
 
 //    @PutMapping("/users/{login}")

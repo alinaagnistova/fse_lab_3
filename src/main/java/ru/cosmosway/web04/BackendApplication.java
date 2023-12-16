@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 @Configuration
 @PropertySources({
-        @PropertySource("application-sample.properties"),
+        @PropertySource("web04.properties"),
 })
 public class BackendApplication {
 

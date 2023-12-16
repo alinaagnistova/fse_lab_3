@@ -1,5 +1,6 @@
 package ru.cosmosway.web04.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import ru.cosmosway.web04.entities.SesssionUser;
 
@@ -14,11 +15,12 @@ import org.springframework.stereotype.Service;
 
 import ru.cosmosway.web04.entitiesDTO.SesssionUserDTO;
 import ru.cosmosway.web04.repo.SessionUserRepository;
-//import weblab4.exceptions.UserAlreadyExistsException;
-//import weblab4.exceptions.UserNotFoundException;
+import ru.cosmosway.web04.exception.SessionUserAlreadyExistsException;
+import ru.cosmosway.web04.exception.SessionUserNotFoundException;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Log
@@ -31,7 +33,6 @@ public class SesssionUserService implements UserDetailsService {
     public SesssionUserService(SessionUserRepository repository) {
         this.repository = repository;
 //        this.passwordEncoder = passwordEncoder;
-        //addUserTest(); //todo: remove test
     }
 
     public List<SesssionUser> allUsers() {
@@ -39,9 +40,8 @@ public class SesssionUserService implements UserDetailsService {
     }
 
     public SesssionUser addUser(SesssionUser newUser) {
-//        if(checkUser(newUser.getLogin()))
-//            throw Exception;
-//            throw  new SesssionUserAlreadyExistsException(newUser.getLogin());
+        if(checkUser(newUser.getLogin()))
+            throw  new SessionUserAlreadyExistsException(newUser.getLogin());
         return repository.save(newUser);
     }
 
@@ -49,13 +49,12 @@ public class SesssionUserService implements UserDetailsService {
         repository.save(newUser);
     }
 
-    public Optional<SesssionUser> getUser(String userLogin) {
-//        try {
-            return Optional.of(repository.findById(userLogin).orElseThrow());
-//                    .orElseThrow(() -> new SesssionUserNotFoundException(userLogin));
-//        }catch (EntityNotFoundException e){
-//            throw new SesssionUserNotFoundException(userLogin);
-//        }
+    public SesssionUser getUser(String userLogin) {
+        try {
+            return repository.findById(userLogin).orElseThrow(() -> new SessionUserNotFoundException(userLogin));
+        }catch (EntityNotFoundException e){
+            throw new SessionUserNotFoundException(userLogin);
+        }
     }
 
 //    public SesssionUser replaceUser(User newUser, String userLogin) {
@@ -78,10 +77,10 @@ public class SesssionUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        SesssionUser user = getUser(login).orElseThrow();
-//        if (Objects.isNull(user)) {
-//            throw new UserNotFoundException(login);
-//        }
+        SesssionUser user = getUser(login);
+        if (Objects.isNull(user)) {
+            throw new SessionUserNotFoundException(login);
+        }
         return new User(user.getLogin(), user.getPassword(), true, true, true, true, new HashSet<>());
     }
 
@@ -92,22 +91,4 @@ public class SesssionUserService implements UserDetailsService {
     public  boolean checkUser(String login){
         return repository.findById(login).isPresent();
     }
-//    private void addUserTest() { //todo: remove test
-////        Coordinates testCoordinates = new Coordinates(7, 7, 7);
-////        Attempt testAttempt = new Attempt(testCoordinates, true);
-////        SesssionUser testUser = new SesssionUser("liv", "marsen");
-////        testUser.getAttemptList().add(testAttempt);
-////        testAttempt.setUser(testUser);
-////        testCoordinates.setAttempt(testAttempt);
-////        repository.save(testUser);
-//        SesssionUser user = new SesssionUser("M","3");
-//        addUser(user);
-////        try {
-//            log.info("Trying to find user with id:\"" + user.getLogin() +"\".");
-//            SesssionUser bdUser = getUser(user.getLogin());
-//            log.info(bdUser.toString());
-////        }catch (UserNotFoundException e){
-////            log.warning(e.getLocalizedMessage());
-////        }
-//    }
 }

@@ -1,5 +1,6 @@
 package ru.cosmosway.web04.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,9 +8,13 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 import lombok.extern.jackson.Jacksonized;
+import ru.cosmosway.web04.rest.RequestController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Entity
 @Getter
 @Setter
@@ -28,14 +33,18 @@ public class SesssionUser {
     @Column(name = "password", nullable = false)
     private String password;
 
-//    @JsonIgnore
-    //if we want to drop all attempts after user death
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Attempt> attemptList = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Request> requestList = new ArrayList<>();
+
+    public SesssionUser(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
 
     public static SesssionUser initUser(){
         SesssionUser user = new SesssionUser();
-//        user.setAttemptList(new ArrayList<>());
+        user.setRequestList(new ArrayList<>());
         return user;
     }
 
@@ -44,7 +53,7 @@ public class SesssionUser {
         return "SesssionUser{" +
                 "login=" + login +
                 ", password=" + password +
-//                ", attemptsIds=" + attemptList.stream().map(attempt -> attempt.getId().toString() + ", ") +
+                ", requestsIds=" + requestList.stream().map(request -> request.getId().toString() + ", ") +
                 '}';
     }
 }
