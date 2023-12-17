@@ -16,7 +16,6 @@ import ru.cosmosway.web04.entities.SesssionUser;
 @RequiredArgsConstructor
 public class SessionUserDetails
         implements UserDetailsService
-//    implements AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken>
 {
 
     private final SesssionUserService service;
