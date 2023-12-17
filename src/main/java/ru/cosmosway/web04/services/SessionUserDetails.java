@@ -2,6 +2,7 @@ package ru.cosmosway.web04.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,7 +14,10 @@ import ru.cosmosway.web04.entities.SesssionUser;
 @Log
 @Service
 @RequiredArgsConstructor
-public class SessionUserDetails implements UserDetailsService {
+public class SessionUserDetails
+        implements UserDetailsService
+//    implements AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken>
+{
 
     private final SesssionUserService service;
 
@@ -31,5 +35,4 @@ public class SessionUserDetails implements UserDetailsService {
                 .disabled(false)
                 .build();
     }
-
 }
