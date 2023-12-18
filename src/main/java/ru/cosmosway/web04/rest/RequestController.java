@@ -24,7 +24,7 @@ public class RequestController {
     }
 
     @GetMapping("/requests")
-    List<RequestDTO> getAllAttempts() {
+    List<RequestDTO> getAllRequests() {
         return service.getAllRequests();
     }
 
@@ -35,6 +35,6 @@ public class RequestController {
 
     @DeleteMapping("/requests")
     void deleteAllAttempt() {
-        service.deleteAllAttempts();
+        service.deleteAllRequests();
     }
 }

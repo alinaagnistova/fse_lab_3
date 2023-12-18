@@ -37,9 +37,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-        private final SessionUserDetails userDetails;
+    private final SessionUserDetails userDetails;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,70 +52,35 @@ public class SecurityConfig {
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                )
-                .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/*").permitAll()
                         .anyRequest().authenticated()
-                ).sessionManagement(sessionManagement ->
+
+                )
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling((exceptionHandling) ->
+                        exceptionHandling
+                                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                )
+                .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         return http.build();
-//        http
-//                .authorizeHttpRequests((authorize) -> authorize
-//                        .requestMatchers("/authenticate").permitAll()
-//                        .anyRequest().authenticated()
-//                ).sessionManagement(sessionManagement ->
-//                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
     }
-//    @Bean
-//    public AuthenticationManager authenticationManager(
-//            SessionUserDetails userDetailsService,
-//            PasswordEncoder passwordEncoder) {
-//        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-//        authenticationProvider.setUserDetailsService(this.userDetails);
-//        authenticationProvider.setPasswordEncoder(this.bCryptPasswordEncoder);
-//
-//        return new ProviderManager(authenticationProvider);
-//    }
-//    @Autowired
-//    public void configure(AuthenticationManagerBuilder builder) throws Exception {
-//        builder.userDetailsService(userDetails).passwordEncoder(bCryptPasswordEncoder);
-//    }
 
-    //    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+    @Autowired
+    public void configure(AuthenticationManagerBuilder builder) throws Exception {
+        builder.userDetailsService(userDetails).passwordEncoder(bCryptPasswordEncoder);
+    }
+
+
     @Bean
     public AuthenticationManager authenticationManager(
-            UserDetailsService userDetailsService,
+            SessionUserDetails uds,
             PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetails);
+        authenticationProvider.setUserDetailsService(uds);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
 
         return new ProviderManager(authenticationProvider);
     }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(userDetails);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-         return new BCryptPasswordEncoder();
-    }
-
 }

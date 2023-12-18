@@ -17,8 +17,7 @@ import ru.cosmosway.web04.entities.SesssionUser;
 public class SessionUserDetails
         implements UserDetailsService
 {
-
-    private final SesssionUserService service;
+    private final SessionUserService service;
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {

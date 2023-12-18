@@ -3,14 +3,14 @@ package ru.cosmosway.web04.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.cosmosway.web04.entities.SesssionUser;
-import ru.cosmosway.web04.services.SesssionUserService;
+import ru.cosmosway.web04.services.SessionUserService;
 import java.util.List;
 
 @RestController
 public class SessionUserController {
-    private final SesssionUserService service;
+    private final SessionUserService service;
     @Autowired
-    public SessionUserController(SesssionUserService service) {
+    public SessionUserController(SessionUserService service) {
         this.service = service;
     }
 

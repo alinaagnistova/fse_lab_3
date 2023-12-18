@@ -1,7 +1,6 @@
 package ru.cosmosway.web04.services;
 
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
 import ru.cosmosway.web04.entities.SesssionUser;
 
 import lombok.extern.java.Log;
@@ -10,7 +9,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import ru.cosmosway.web04.entitiesDTO.SesssionUserDTO;
@@ -21,16 +19,15 @@ import ru.cosmosway.web04.exception.SessionUserNotFoundException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Log
 @Service
-public class SesssionUserService implements UserDetailsService {
+public class SessionUserService implements UserDetailsService {
     private final SessionUserRepository repository;
 //    private final BCryptPasswordEncoder passwordEncoder; //FIXME this field needed only for tests
 
     @Autowired
-    public SesssionUserService(SessionUserRepository repository
+    public SessionUserService(SessionUserRepository repository
 //            , BCryptPasswordEncoder passwordEncoder
     ) {
         this.repository = repository;

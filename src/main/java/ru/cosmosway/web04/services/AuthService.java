@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-    private final SesssionUserService userSrv;
-    public AuthService(SesssionUserService userSrv)
+    private final SessionUserService userSrv;
+    public AuthService(SessionUserService userSrv)
     {
         this.userSrv = userSrv;
     }

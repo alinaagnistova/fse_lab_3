@@ -2,6 +2,7 @@ package ru.cosmosway.web04.services;
 
 import lombok.extern.java.Log;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import ru.cosmosway.web04.entities.Request;
 import ru.cosmosway.web04.entities.Coordinates;
@@ -24,11 +25,11 @@ import java.util.List;
 @Log
 @Service
 public class RequestService {
-    private final SesssionUserService service;
+    private final SessionUserService service;
     private final AreaChecker areaChecker;
     private final CoordinatesValidator coordinatesValidator;
 
-    public RequestService(SesssionUserService service
+    public RequestService(SessionUserService service
             , CheckerBuilder checkerBuilder, CoordinatesValidator coordinatesValidator
     ) {
         this.areaChecker = checkerBuilder
@@ -54,12 +55,11 @@ public class RequestService {
     public RequestDTO addRequest(CoordinatesDTO coords) throws EmptyCoordinateException, CoordinatesOutOfBoundsException, SessionUserNotFoundException
 {
         try {
-            coordinatesValidator.validate(coords); //if validation fails throws exceptions
-            //update user by extra attempt
+            coordinatesValidator.validate(coords);
             Request newRequest = new Request(new Coordinates(coords.getX(), coords.getY(), coords.getR())
                     , areaChecker.check(coords)
             );
-            SesssionUser newRequestUser = service.getUser(getCurrentUserLogin()); //un(log in) users can't addAttempts
+            SesssionUser newRequestUser = service.getUser(getCurrentUserLogin());
             newRequest.setUser(newRequestUser);
             newRequest.getCoordinates().setRequest(newRequest);
             newRequestUser.getRequestList().add(newRequest);
@@ -69,19 +69,11 @@ public class RequestService {
             return null;
         }
     }
-
-    //todo: do i need this methods:
-    // Attempt getAttempt();
-    // Attempt replaceAttempt(Attempt newAttempt, Long id);
-    // void deleteAttempt(Long id);
-
-    public void deleteAllAttempts(){
+    public void deleteAllRequests(){
         service.getUser(getCurrentUserLogin()).setRequestList(new ArrayList<>());
     }
 
-
     private String getCurrentUserLogin() {
-        return "user1";
-//        return (SecurityContextHolder.getContext().getAuthentication().getPrincipal()).toString(); //fixme: check that this cast is ok
+        return ((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
     }
 }
