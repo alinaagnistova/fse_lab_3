@@ -35,7 +35,7 @@ public class RequestController {
     }
 
     @DeleteMapping("/requests")
-    void deleteAllAttempt() {
+    void deleteAllRequests() {
         service.deleteAllRequests();
     }
 }

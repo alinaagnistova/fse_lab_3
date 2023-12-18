@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.java.Log;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Log
 @Getter
@@ -14,6 +17,8 @@ public class RequestDTO {
     private double y;
     private double r;
     private boolean areaIntersection;
+    private String time;
+    private String execTime;
     @Override
     public String toString() {
         return "Request{" +

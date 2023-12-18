@@ -25,18 +25,20 @@ public class SessionUserController {
         return service.addUser(newUser);
     }
 
-    // Single item
     @GetMapping("/users/{login}")
     SesssionUser getUser(@PathVariable String login) {
         return service.getUser(login);
     }
 
+    @GetMapping("/users/profile")
+    SesssionUser getUserProfile() {
+        return service.getUserViaAuth();
+    }
+
     @PutMapping("/users/{login}")
     SesssionUser replaceUser(@RequestBody SesssionUser newUser, @PathVariable String login) {
         return service.replaceUser(newUser, login);
-
     }
-
     @DeleteMapping("/users/{login}")
     void deleteAttempt(@PathVariable String login) {
         service.deleteUser(login);

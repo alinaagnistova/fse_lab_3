@@ -15,13 +15,13 @@ public class CoordinatesValidator {
         double r = Optional.of(coordinates.getR()).orElseThrow(() -> new EmptyCoordinateException("r"));
 
 
-        if (!(x >= -4 && x <= 4)) {
+        if (!(x >= -5 && x <= 3)) {
             throw new CoordinatesOutOfBoundsException(x, "x");
         }
-        if (!(y >= -5 && y <= 5)) {
+        if (!(y >= -3 && y <= 3)) {
             throw new CoordinatesOutOfBoundsException(y, "y");
         }
-        if (!(r >= 1 && r <= 5)) {
+        if (!(r >= -5 && r <= 3)) {
             throw new CoordinatesOutOfBoundsException(r, "r");
         }
     }

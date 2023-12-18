@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.java.Log;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 import jakarta.persistence.*;
@@ -37,11 +38,16 @@ public class Request {
     @ManyToOne(cascade = CascadeType.ALL)
     private SesssionUser user = null;
 
-    public Request(Coordinates coordinates, boolean areaIntersection) {
+    private String time;
+    private String execTime;
+
+    public Request(Coordinates coordinates, boolean areaIntersection, String createTime, String execTime) {
         this.coordinates = coordinates;
         this.areaIntersection = areaIntersection;
         this.user = null;
         this.id = null;
+        this.time = createTime;
+        this.execTime = execTime;
     }
 
     public static Request initRequest() {

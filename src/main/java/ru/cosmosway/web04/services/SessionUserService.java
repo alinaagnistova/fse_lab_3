@@ -1,6 +1,9 @@
 package ru.cosmosway.web04.services;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.cosmosway.web04.entities.SesssionUser;
 
 import lombok.extern.java.Log;
@@ -23,17 +26,18 @@ import java.util.Objects;
 
 @Log
 @Service
+@RequiredArgsConstructor
 public class SessionUserService implements UserDetailsService {
     private final SessionUserRepository repository;
-//    private final BCryptPasswordEncoder passwordEncoder; //FIXME this field needed only for tests
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    public SessionUserService(SessionUserRepository repository
-//            , BCryptPasswordEncoder passwordEncoder
-    ) {
-        this.repository = repository;
-//        this.passwordEncoder = passwordEncoder;
-    }
+//    @Autowired
+//    public SessionUserService(SessionUserRepository repository
+////            , BCryptPasswordEncoder passwordEncoder
+//    ) {
+//        this.repository = repository;
+////        this.passwordEncoder = passwordEncoder;
+//    }
 
     public List<SesssionUser> allUsers() {
         return repository.findAll();
@@ -56,9 +60,16 @@ public class SessionUserService implements UserDetailsService {
             throw new SessionUserNotFoundException(userLogin);
         }
     }
+    public SesssionUser getUserViaAuth() {
+        try {
+            return repository.findById(getCurrentUserLogin()).orElseThrow(() -> new SessionUserNotFoundException(getCurrentUserLogin()));
+        }catch (EntityNotFoundException e){
+            throw new SessionUserNotFoundException(getCurrentUserLogin());
+        }
+    }
 
     public SesssionUser replaceUser(SesssionUser newUser, String userLogin) {
-
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         return repository.findById(userLogin)
                 .map(us -> {
                     us.setPassword(newUser.getPassword());
@@ -90,5 +101,9 @@ public class SessionUserService implements UserDetailsService {
 
     public  boolean checkUser(String login){
         return repository.findById(login).isPresent();
+    }
+
+    private String getCurrentUserLogin() {
+        return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
     }
 }
