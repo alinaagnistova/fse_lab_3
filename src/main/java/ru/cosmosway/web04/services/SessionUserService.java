@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+
 @Log
 @Service
 public class SessionUserService implements UserDetailsService {
@@ -56,19 +57,19 @@ public class SessionUserService implements UserDetailsService {
         }
     }
 
-//    public SesssionUser replaceUser(User newUser, String userLogin) {
-//
-//        return repository.findById(userLogin);
-////                .map(user -> {
-////                    user.setPassword(newUser.getPassword());
-////                    user.setAttemptList(newUser.getAttemptList()); //todo:check that here we put the whole object and check if it is authorized
-////                    return repository.save(user);
-////                })
-////                .orElseGet(() -> {
-////                    newUser.setLogin(userLogin);
-////                    return repository.save(newUser);
-////                });
-//    }
+    public SesssionUser replaceUser(SesssionUser newUser, String userLogin) {
+
+        return repository.findById(userLogin)
+                .map(us -> {
+                    us.setPassword(newUser.getPassword());
+                    us.setRequestList(newUser.getRequestList()); //todo:check that here we put the whole object and check if it is authorized
+                    return repository.save(us);
+                })
+                .orElseGet(() -> {
+                    newUser.setLogin(userLogin);
+                    return repository.save(newUser);
+                });
+    }
 
     public void deleteUser(String login) {
         repository.deleteById(login);

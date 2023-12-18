@@ -7,6 +7,7 @@ import ru.cosmosway.web04.services.SessionUserService;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 public class SessionUserController {
     private final SessionUserService service;
     @Autowired
@@ -30,11 +31,11 @@ public class SessionUserController {
         return service.getUser(login);
     }
 
-//    @PutMapping("/users/{login}")
-//    SesssionUser replaceUser(@RequestBody SesssionUser newUser, @PathVariable String login) {
-//        return service.replaceUser(newUser, login);
-//
-//    }
+    @PutMapping("/users/{login}")
+    SesssionUser replaceUser(@RequestBody SesssionUser newUser, @PathVariable String login) {
+        return service.replaceUser(newUser, login);
+
+    }
 
     @DeleteMapping("/users/{login}")
     void deleteAttempt(@PathVariable String login) {

@@ -16,6 +16,7 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin
 public class RequestController {
     private final RequestService service;
     @Autowired
