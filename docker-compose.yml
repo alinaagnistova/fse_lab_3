@@ -1,17 +1,28 @@
 version: '2'
 
 services:
-  app:
+  web04-backend:
     image: 'web04:latest'
     build:
       context: .
+      dockerfile: Dockerfile
     container_name: web04
+    ports:
+      - "2346:2346"
     depends_on:
-      - db
+      - service-db
 
-  db:
+  service-db:
     image: 'postgres:latest'
-    container_name: postgres
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+    ports:
+        - "15432:5432"
+    volumes:
+        - ./create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
+        - db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  db-data:
