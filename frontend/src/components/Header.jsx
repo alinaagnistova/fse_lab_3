@@ -6,7 +6,6 @@ import {logout, setCredentials} from "../features/auth/authSlice";
 import './header.css';
 import {styled} from "@mui/system";
 import {AppBar, Button, CssBaseline, Toolbar, Typography} from "@mui/material";
-// import {Menu} from "@mui/icons-material/Menu";
 const useStyles = styled((theme) => ({
     root: {
         flexGrow: 1,
@@ -22,9 +21,10 @@ const Header = () => {
     const {userInfo} = useSelector((state) => state.auth)
     const dispatch = useDispatch()
     const classes = useStyles()
-    const {data, isFetching} = useGetUserDetailsQuery('userDetails',{
+    const {data, isFetching} = useGetUserDetailsQuery('userInfo',{
         pollingInterval: 900000,
     })
+
     useEffect(() => {
         if (data) dispatch(setCredentials(data))
     },[data, dispatch])
@@ -34,16 +34,14 @@ const Header = () => {
             <CssBaseline/>
             <AppBar position="static" style={{ background: '#2e7d32' }}>
                 <Toolbar sx={{ justifyContent: "space-between" }}>
-                    {/*<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">*/}
-                    {/*    <MenuIcon/>*/}
-                    {/*</IconButton>*/}
                     <Typography variant="h6" className={classes.title}>
                         {isFetching
                             ? `Fetching your profile...`
                             : userInfo !== null
-                                ? `Logged in as ${userInfo.username}`
+                                ? `Logged in as ${userInfo.login}`
                                 : "You're not logged in"}
                     </Typography>
+
                     <div/>
                         {userInfo ? (
                         <Button color="inherit" onClick={() => dispatch(logout())} sx={{ justifyContent: "flex-end" }}>
@@ -51,7 +49,7 @@ const Header = () => {
                         </Button>
                             ) : (
                             <NavLink className='button' to='/login'>
-                                Login
+                                LOGIN
                             </NavLink>
                         )}
                 </Toolbar>
@@ -60,38 +58,10 @@ const Header = () => {
                 <NavLink to='/'>About</NavLink>
                 <NavLink to='/login'>Login</NavLink>
                 <NavLink to='/register'>Register</NavLink>
-                <NavLink to='/user-profile'>Profile</NavLink>
+                <NavLink to='/user-profile'>Dots</NavLink>
             </nav>
         </div>
         </header>
-        // <header>
-        // <div>
-        //            <span>
-        //   {isFetching
-        //       ? `Fetching your profile...`
-        //       : userInfo !== null
-        //           ? `Logged in as ${userInfo.username}`
-        //           : "You're not logged in"}
-        // </span>
-        //     <div className='cta'>
-        //         {userInfo ? (
-        //             <button className='button' onClick={() => dispatch(logout())}>
-        //                 Logout
-        //             </button>
-        //         ) : (
-        //             <NavLink className='button' to='/login'>
-        //                 Login
-        //             </NavLink>
-        //         )}
-        //     </div>
-        //     <nav className='container navigation'>
-        //         <NavLink to='/'>About</NavLink>
-        //         <NavLink to='/login'>Login</NavLink>
-        //         <NavLink to='/register'>Register</NavLink>
-        //         <NavLink to='/user-profile'>Profile</NavLink>
-        //     </nav>
-        // </div>
-        // </header>
     );
 };
 

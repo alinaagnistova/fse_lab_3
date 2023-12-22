@@ -36,7 +36,7 @@ const Login = () => {
     return (
         <Container>
             <Paper elevation={3} style={paperStyle}>
-                <h1 style={{textAlign:'center'}}>Log In</h1>
+                <h1 style={{textAlign: 'center'}}>Log In</h1>
                 <form className={classes.root} noValidate autoComplete="off">
                     {error && <Error>{error}</Error>}
                     {/*<div className='form-group'>*/}
@@ -50,30 +50,18 @@ const Login = () => {
                                        variant="outlined" {...register('password')} required fullWidth></TextField>
                         </Grid>
                         <Grid item>
-                            <div style={{textAlign:'center'}}>
-                            <Button onClick={handleSubmit(submitForm)} variant="contained" color="success"
-                                    disabled={loading} style={{}}>
-                                {loading ? <Spinner/> : 'Log In'}
-                            </Button>
+                            <div style={{textAlign: 'center'}}>
+                                <Button onClick={handleSubmit(submitForm)} variant="contained" color="success"
+                                        disabled={loading} style={{}}>
+                                    {loading ? <Spinner/> : 'Log In'}
+                                </Button>
                             </div>
                         </Grid>
                     </Grid>
-                        {/*<label htmlFor='username'>Username</label>*/}
-                        {/*<input type="text" className="form-input" {...register('username')} required/>*/}
-                        {/*</div>*/}
-                        {/*<div className='form-group'>*/}
-
-                        {/*<label htmlFor='password'>Password</label>*/}
-                        {/*<input type="password" className="form-input" {...register('password')} required/>*/}
-                        {/*</div>*/}
-
-                        {/*<button type='submit' className='button' disabled={loading}>*/}
-                        {/*    {loading ? <Spinner/> : 'Log In'}*/}
-                        {/*</button>*/}
                 </form>
             </Paper>
         </Container>
-);
+    );
 };
 
 export default Login;

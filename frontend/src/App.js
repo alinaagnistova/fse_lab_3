@@ -26,21 +26,6 @@ function App() {
       </Router>
       );
 }
-      // <Router>
-      //     <Header/>
-      //   <main>
-      //   <Routes>
-      //       <Route path='/' element={<Login/>}/>
-      //       <Route path='/login' element={<Login/>}/>
-      //       <Route path='/register' element={<Register/>}/>
-      //       <Route element={<ProtectedRoute/>}>
-      //           <Route path='/user-profile' element={<Profile/>}/>
-      //       </Route>
-      //   </Routes>
-      //   </main>
-      // </Router>
-//
-//   );
-// }
+
 
 export default App;
