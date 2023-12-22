@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  app:
+    image: 'web04:latest'
+    build:
+      context: .
+    container_name: web04
+    depends_on:
+      - db
+
+  db:
+    image: 'postgres:latest'
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
