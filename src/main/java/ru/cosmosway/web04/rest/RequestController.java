@@ -16,6 +16,7 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin
 public class RequestController {
     private final RequestService service;
     @Autowired
@@ -24,7 +25,7 @@ public class RequestController {
     }
 
     @GetMapping("/requests")
-    List<RequestDTO> getAllAttempts() {
+    List<RequestDTO> getAllRequests() {
         return service.getAllRequests();
     }
 
@@ -34,7 +35,7 @@ public class RequestController {
     }
 
     @DeleteMapping("/requests")
-    void deleteAllAttempt() {
-        service.deleteAllAttempts();
+    void deleteAllRequests() {
+        service.deleteAllRequests();
     }
 }

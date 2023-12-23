@@ -1,7 +1,9 @@
 package ru.cosmosway.web04.services;
 
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.cosmosway.web04.entities.SesssionUser;
 
 import lombok.extern.java.Log;
@@ -10,7 +12,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import ru.cosmosway.web04.entitiesDTO.SesssionUserDTO;
@@ -21,19 +22,22 @@ import ru.cosmosway.web04.exception.SessionUserNotFoundException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+
 
 @Log
 @Service
-public class SesssionUserService implements UserDetailsService {
+@RequiredArgsConstructor
+public class SessionUserService implements UserDetailsService {
     private final SessionUserRepository repository;
-//    private final BCryptPasswordEncoder passwordEncoder; //FIXME this field needed only for tests
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    public SesssionUserService(SessionUserRepository repository) {
-        this.repository = repository;
-//        this.passwordEncoder = passwordEncoder;
-    }
+//    @Autowired
+//    public SessionUserService(SessionUserRepository repository
+////            , BCryptPasswordEncoder passwordEncoder
+//    ) {
+//        this.repository = repository;
+////        this.passwordEncoder = passwordEncoder;
+//    }
 
     public List<SesssionUser> allUsers() {
         return repository.findAll();
@@ -56,20 +60,27 @@ public class SesssionUserService implements UserDetailsService {
             throw new SessionUserNotFoundException(userLogin);
         }
     }
+    public SesssionUser getUserViaAuth() {
+        try {
+            return repository.findById(getCurrentUserLogin()).orElseThrow(() -> new SessionUserNotFoundException(getCurrentUserLogin()));
+        }catch (EntityNotFoundException e){
+            throw new SessionUserNotFoundException(getCurrentUserLogin());
+        }
+    }
 
-//    public SesssionUser replaceUser(User newUser, String userLogin) {
-//
-//        return repository.findById(userLogin);
-////                .map(user -> {
-////                    user.setPassword(newUser.getPassword());
-////                    user.setAttemptList(newUser.getAttemptList()); //todo:check that here we put the whole object and check if it is authorized
-////                    return repository.save(user);
-////                })
-////                .orElseGet(() -> {
-////                    newUser.setLogin(userLogin);
-////                    return repository.save(newUser);
-////                });
-//    }
+    public SesssionUser replaceUser(SesssionUser newUser, String userLogin) {
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        return repository.findById(userLogin)
+                .map(us -> {
+                    us.setPassword(newUser.getPassword());
+                    us.setRequestList(newUser.getRequestList()); //todo:check that here we put the whole object and check if it is authorized
+                    return repository.save(us);
+                })
+                .orElseGet(() -> {
+                    newUser.setLogin(userLogin);
+                    return repository.save(newUser);
+                });
+    }
 
     public void deleteUser(String login) {
         repository.deleteById(login);
@@ -90,5 +101,9 @@ public class SesssionUserService implements UserDetailsService {
 
     public  boolean checkUser(String login){
         return repository.findById(login).isPresent();
+    }
+
+    private String getCurrentUserLogin() {
+        return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
     }
 }
