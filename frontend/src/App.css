@@ -51,7 +51,7 @@ form button {
 
 @media screen and (min-width: 1111px) {
   form {
-    max-width: 55%;
+    max-width: 100%;
   }
 }
 
@@ -65,8 +65,6 @@ form button {
 
 @media screen and (max-width: 771px) {
   form {
-    max-width: 80%;
+    max-width: 55%;
   }
 }
-
-
