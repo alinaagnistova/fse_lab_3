@@ -39,7 +39,6 @@ const Login = () => {
                 <h1 style={{textAlign: 'center'}}>Log In</h1>
                 <form className={classes.root} noValidate autoComplete="off">
                     {error && <Error>{error}</Error>}
-                    {/*<div className='form-group'>*/}
                     <Grid container direction={"column"} spacing={5}>
                         <Grid item>
                             <TextField id="outlined-basic" label="Username" variant="outlined" {...register('username')}
