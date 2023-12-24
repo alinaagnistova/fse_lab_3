@@ -73,24 +73,6 @@ const Register = () => {
                 </form>
             </Paper>
         </Container>
-        // <form onSubmit={handleSubmit(submitForm)}>
-        //     {error && <Error>{error}</Error>}
-        //     <div className='form-group'>
-        //         <label htmlFor='username'>Username</label>
-        //         <input type="text" className="form-input" {...register('username')} required/>
-        //     </div>
-        //     <div className='form-group'>
-        //         <label htmlFor='password'>Password</label>
-        //         <input type="password" className="form-input" {...register('password')} required/>
-        //     </div>
-        //     <div className='form-group'>
-        //         <label htmlFor='confirmPassword'>Confirm Password</label>
-        //         <input type="password" className="form-input" {...register('confirmPassword')} required/>
-        //     </div>
-        //     <button type='submit' className='button' disabled={loading}>
-        //         {loading ? <Spinner /> : 'Register'}
-        //     </button>
-        // </form>
     );
 };
 
