@@ -1,13 +1,13 @@
-import React, {useEffect} from 'react';
-import {useForm} from "react-hook-form";
-import {userLogin} from "../features/auth/authActions";
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
+import {useForm} from "react-hook-form";
+import {registerUser} from "../features/auth/authActions";
 import {useNavigate} from "react-router-dom";
-import Spinner from "./Spinner";
 import Error from "./Error";
-import TextField from '@mui/material/TextField';
-import {Container, styled, textAlign} from "@mui/system";
+import Spinner from "./Spinner";
+import {Container, styled} from "@mui/system";
 import {Button, Grid, Paper} from "@mui/material";
+import TextField from "@mui/material/TextField";
 
 const useStyles = styled((theme) => ({
         root: {
@@ -17,28 +17,37 @@ const useStyles = styled((theme) => ({
         },
     })
 )
-const Login = () => {
+const Register = () => {
+    const [customError, setCustomError] = useState(null)
+    const {loading, userInfo, error, success} = useSelector(
+        (state) => state.auth
+    )
     const dispatch = useDispatch()
-    const {loading, userInfo, error} = useSelector((state) => state.auth)
     const {register, handleSubmit} = useForm()
     const navigate = useNavigate()
     const paperStyle = {padding: '50px 20px', width: 600, margin: "20px auto"};
     const classes = useStyles()
 
-    useEffect(() => {
-        if (userInfo) {
-            navigate('/user-profile')
-        }
-    }, [navigate, userInfo])
+    useEffect(() =>{
+        if (success) navigate ('/login')
+        if (userInfo) navigate ('user-profile')
+    },[navigate, userInfo, success])
     const submitForm = (data) => {
-        dispatch(userLogin(data))
+        if (data.password !== data.confirmPassword) {
+            setCustomError('Password mismatch')
+            return
+        }
+        data.username = data.username.toLowerCase()
+        dispatch(registerUser(data))
     }
+
     return (
         <Container>
             <Paper elevation={3} style={paperStyle}>
-                <h1 style={{textAlign: 'center'}}>Log In</h1>
+                <h1 style={{textAlign:'center'}}>Sign Up</h1>
                 <form className={classes.root} noValidate autoComplete="off">
                     {error && <Error>{error}</Error>}
+                    {customError && <Error>{customError}</Error>}
                     <Grid container direction={"column"} spacing={5}>
                         <Grid item>
                             <TextField id="outlined-basic" label="Username" variant="outlined" {...register('username')}
@@ -49,10 +58,14 @@ const Login = () => {
                                        variant="outlined" {...register('password')} required fullWidth></TextField>
                         </Grid>
                         <Grid item>
-                            <div style={{textAlign: 'center'}}>
+                            <TextField type="password" id="outlined-basic" label="Confirm password"
+                                       variant="outlined" {...register('confirmPassword')} required fullWidth></TextField>
+                        </Grid>
+                        <Grid item>
+                            <div style={{textAlign:'center'}}>
                                 <Button onClick={handleSubmit(submitForm)} variant="contained" color="success"
                                         disabled={loading} style={{}}>
-                                    {loading ? <Spinner/> : 'Log In'}
+                                    {loading ? <Spinner/> : 'Sign Up'}
                                 </Button>
                             </div>
                         </Grid>
@@ -63,4 +76,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;

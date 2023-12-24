@@ -58,7 +58,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
 
                 )
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((exceptionHandling) ->
                         exceptionHandling
                                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)

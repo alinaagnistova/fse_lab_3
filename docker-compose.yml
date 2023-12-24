@@ -2,10 +2,11 @@ version: '2'
 
 services:
   web04-backend:
+    container_name: web04-backend
     image: 'web04:latest'
     domainname: web04.cosmosway.ru
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     ports:
       - "8181:8181"
@@ -16,17 +17,27 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db/web04
 
   service-db:
+    container_name: service-db
     image: 'postgres:latest'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=web04
     ports:
-        - "15432:5432"
+      - "15432:5432"
     volumes:
-        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-        - db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db-data:/var/lib/postgresql/data
     restart: unless-stopped
+
+  web04-frontend:
+    container_name: web04-frontend
+    domainname: web04.cosmosway.ru
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '80:3000'
 
 volumes:
   db-data:

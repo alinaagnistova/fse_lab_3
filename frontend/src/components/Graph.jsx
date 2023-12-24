@@ -15,8 +15,8 @@ const Graph = (props) => {
     const TO_RECALC_COORD = 160;
     const TO_RECALC_R = 80;
     const TO_UPDATE_TRIANGLE = 15;
-    const TO_UPDATE_RECTANGLE = 29; //30
-    const TO_UPDATE_CIRCLE = 15; //14
+    const TO_UPDATE_RECTANGLE = 29; 
+    const TO_UPDATE_CIRCLE = 15; 
 
     const sendCoordClick = (x,y,r) => {
         dispatch(sendDots({x,y,r}));
@@ -87,26 +87,24 @@ const Graph = (props) => {
             sendCoordClick(toSendX, toSendY, r);
         };
 
-        // Attach the click event listener
         svg.addEventListener('click', handleSVGClick);
 
-        // Clean up by removing the event listener when the component unmounts
         return () => {
             svg.removeEventListener('click', handleSVGClick);
         };
-    }, [props.radius, dispatch]); // Add any dependencies needed
+    }, [props.radius, dispatch]); 
 
 
     useEffect(() => {
         let timeoutId;
         if (customError) {
             timeoutId = setTimeout(() => {
-                setCustomError(null); // Reset customError after 2 seconds
+                setCustomError(null); 
             }, 2000);
         }
 
         return () => {
-            clearTimeout(timeoutId); // Clear timeout on component unmount or change of customError
+            clearTimeout(timeoutId);
         };
     }, [customError]);
 

@@ -30,7 +30,6 @@ public class SesssionUser {
     @Column(name = "login", nullable = false)
     private String login;
 
-    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 
