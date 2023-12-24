@@ -32,12 +32,16 @@ public class SessionUserController {
 
     @GetMapping("/users/profile")
     SesssionUser getUserProfile() {
-        return service.getUserViaAuth();
+        var user = service.getUserViaAuth();
+        user.setPassword("");
+        return user;
     }
 
     @PutMapping("/users/{login}")
     SesssionUser replaceUser(@RequestBody SesssionUser newUser, @PathVariable String login) {
-        return service.replaceUser(newUser, login);
+        var user = service.replaceUser(newUser, login);
+        user.setPassword("");
+        return user;
     }
     @DeleteMapping("/users/{login}")
     void deleteAttempt(@PathVariable String login) {
