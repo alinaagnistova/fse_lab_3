@@ -31,12 +31,13 @@ services:
     restart: unless-stopped
 
   web04-frontend:
-    container_name: web0r-frontend
+    container_name: web04-frontend
+    domainname: web04.cosmosway.ru
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - '81:81'
+      - '81:3000'
 
 
 volumes:

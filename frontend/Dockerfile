@@ -1,6 +1,6 @@
 FROM node:latest
 
-EXPOSE 81
+EXPOSE 3000
 
 WORKDIR /opt/frontend
 
