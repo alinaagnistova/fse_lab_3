@@ -47,10 +47,10 @@ const Profile = () => {
         return true;
     };
 
-    useEffect(() => {
+    useEffect((data) => {
         (async () => {
             try {
-                await dispatch(getDots());
+                await dispatch(getDots(data));
             } catch (error) {
                 console.error('Error loading points for the table', error);
             }
