@@ -1,7 +1,7 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "axios";
 
-const backendURL = 'http://172.28.17.153:2346'
+const backendURL = process.env.REACT_APP_BACKEND_URL;
 
 export const registerUser = createAsyncThunk(
     'auth/register',
