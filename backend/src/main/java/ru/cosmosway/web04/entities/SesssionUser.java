@@ -1,18 +1,17 @@
 package ru.cosmosway.web04.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import jakarta.persistence.*;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import ru.cosmosway.web04.rest.RequestController;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@SuperBuilder
 @NoArgsConstructor
 //@AllArgsConstructor
 @Entity
@@ -35,6 +34,7 @@ public class SesssionUser {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Request> requestList = new ArrayList<>();
 
     public SesssionUser(String login, String password) {
