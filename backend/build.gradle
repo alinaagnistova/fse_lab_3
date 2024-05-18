@@ -63,10 +63,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     compileOnly 'org.projectlombok:lombok'
-//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-//    testImplementation 'org.seleniumhq.selenium:selenium-java:4.20.0'
-//    testImplementation 'junit:junit:4.13.1'
-//    implementation 'org.springframework.boot:spring-boot-docker-compose'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.20.0'
+    testImplementation 'junit:junit:4.13.1'
+    implementation 'org.springframework.boot:spring-boot-docker-compose'
 }
 
 dependencyManagement {
@@ -87,7 +87,7 @@ generateJava {
 
 //compile -- компиляция исходных кодов проекта.
 tasks.register('compileProject', JavaCompile) {
-    description = 'Компиляция исходных кодов проекта...'
+    description = 'Компиляция исходных кодов проекта'
     dependsOn 'classes'
 }
 
@@ -128,27 +128,67 @@ tasks.register('xmlProject') {
         }
     }
 }
-//
-////doc - добавление в MANIFEST.MF MD5 и SHA-1 файлов проекта, а также генерация и добавление в архив javadoc по всем классам проекта.
-//task docProject(){
+
+//doc - добавление в MANIFEST.MF MD5 и SHA-1 файлов проекта, а также генерация и добавление в архив javadoc по всем классам проекта.
+tasks.register('docProject') {
+    description = 'Добавление в MANIFEST.MF MD5 и SHA-1 файлов проекта, а также генерация и добавление в архив javadoc по всем классам проекта'
+
+    dependsOn 'javadoc'
+    doLast {
+        def files = fileTree(dir: '.', include: '**/*.*')
+        def md5s = [:]
+        def sha1s = [:]
+
+        files.each { file ->
+            def md5 = file.bytes.encodeHex().toString().digest('MD5')
+            def sha1 = file.bytes.encodeHex().toString().digest('SHA-1')
+
+            md5s[file.name] = md5
+            sha1s[file.name] = sha1
+        }
+
+        def manifestFile = file('build/tmp/jar/MANIFEST.MF')
+        if (!manifestFile.exists()) {
+            manifestFile.parentFile.mkdirs()
+            manifestFile.createNewFile()
+        }
+
+        manifestFile.withWriterAppend { writer ->
+            md5s.each { name, hash ->
+                writer.writeLine("MD5-${name}: ${hash}")
+            }
+            sha1s.each { name, hash ->
+                writer.writeLine("SHA1-${name}: ${hash}")
+            }
+        }
+
+        def jarFile = tasks.named('jar').get().archiveFile.get().asFile
+        def javadocDir = tasks.named('javadoc').get().destinationDir
+        ant.zip(update: true, destfile: jarFile) {
+            fileset(dir: javadocDir)
+        }
+    }
+}
+
+//scp - перемещение собранного проекта по scp на выбранный сервер по завершению сборки.
+//Предварительно необходимо выполнить сборку проекта (цель build)
+//tasks.register('scpProject') {
 //
 //}
-//
-////scp - перемещение собранного проекта по scp на выбранный сервер по завершению сборки.
-////Предварительно необходимо выполнить сборку проекта (цель build)
-//task scpProject(){
-//
-//}
-//
 ////native2ascii - преобразование native2ascii для копий файлов локализации (для тестирования сценария все строковые параметры необходимо вынести из классов в файлы локализации).
-//task native2asciiProject(){
+//tasks.register('native2asciiProject') {
 //
 //}
-//
-////music - воспроизведение музыки по завершению сборки (цель build).
-//task musicProject(){
-//
-//}
+//music - воспроизведение музыки по завершению сборки (цель build).
+tasks.register('musicProject') {
+    description = 'Воспроизведение музыки по завершению сборки (цель build)'
+    doLast {
+        exec {
+            commandLine 'afplay', 'music/meow.wav'
+        }
+    }
+}
+
 //
 ////report - в случае успешного прохождения тестов сохраняет отчет junit в формате xml, добавляет его в репозиторий svn и выполняет commit.
 //task reportProject(){
@@ -161,9 +201,12 @@ tasks.register('xmlProject') {
 //
 //}
 //
-////team - осуществляет получение из git-репозитория 3 предыдущих ревизий, их сборку (по аналогии с основной) и упаковку получившихся jar-файлов в zip-архив. Сборку реализовать посредством вызова цели build.
+////team - осуществляет получение из git-репозитория 3 предыдущих ревизий, их сборку (по аналогии с основной) и упаковку получившихся jar-файлов в zip-архив.
+////Сборку реализовать посредством вызова цели build.
 ////diff - осуществляет проверку состояния рабочей копии, и, если изменения не касаются классов, указанных в файле параметров выполняет commit в репозиторий git.
-////history - если проект не удаётся скомпилировать (цель compile), загружается предыдущая версия из репозитория git. Операция повторяется до тех пор, пока проект не удастся собрать, либо не будет получена самая первая ревизия из репозитория. Если такая ревизия найдена, то формируется файл, содержащий результат операции diff для всех файлов, измёненных в ревизии, следующей непосредственно за последней работающей.
+////history - если проект не удаётся скомпилировать (цель compile), загружается предыдущая версия из репозитория git.
+////Операция повторяется до тех пор, пока проект не удастся собрать, либо не будет получена самая первая ревизия из репозитория.
+////Если такая ревизия найдена, то формируется файл, содержащий результат операции diff для всех файлов, измёненных в ревизии, следующей непосредственно за последней работающей.
 //
 //
 //
