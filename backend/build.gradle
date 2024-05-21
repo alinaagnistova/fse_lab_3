@@ -195,12 +195,54 @@ tasks.register('musicProject') {
 //
 //}
 //
-////alt - создаёт альтернативную версию программы с измененными именами переменных и классов (используя задание replace/replaceregexp в файлах параметров) и упаковывает её в jar-архив.
-////Для создания jar-архива использует цель build.
-//task altProject(){
-//
-//}
-//
+//alt - создаёт альтернативную версию программы с измененными именами переменных и классов (используя задание replace/replaceregexp в файлах параметров) и упаковывает её в jar-архив.
+//Для создания jar-архива использует цель build.
+//attributes 'Main-Class': 'ru.cosmosway.web04.BackendApplication'
+tasks.register('altProject') {
+    description = 'Создаёт альтушную версию программы с измененными именами переменных и классов и упаковывает её в jarник'
+    doLast {
+        def srcDir = file("${projectDir}/src/main/java")
+        def altushka = file("${buildDir}/altushka")
+        delete altushka
+        altushka.mkdirs()
+
+        copy {
+            from srcDir
+            into altushka
+            include '**/*.java'
+            filter { line ->
+                line.replaceAll('OldClassName', 'NewClassName')
+                        .replaceAll('oldVariableName', 'newVariableName')
+            }
+        }
+
+        println "Альтушки скопированы и заменены в ${altushka}"
+    }
+}
+
+tasks.register('compileAltushka', JavaCompile) {
+    dependsOn 'altushkaProject'
+    source = fileTree("${buildDir}/altushkaSrc") {
+        include '**/*.java'
+    }
+    classpath = sourceSets.main.compileClasspath
+    destinationDir = file("${buildDir}/altushkaClasses")
+}
+
+tasks.register('jarAltushka', Jar) {
+    dependsOn 'compileAltushka'
+    archiveFileName = 'altushka.jar'
+    from tasks.named('compileAltushka').get().destinationDir
+    manifest {
+        attributes 'Main-Class': 'ru.cosmosway.web04.BackendApplication'
+    }
+}
+
+tasks.named('build') {
+    dependsOn 'jarAltushka'
+}
+
+
 //team - осуществляет получение из git-репозитория 3 предыдущих ревизий, их сборку (по аналогии с основной) и упаковку получившихся jar-файлов в zip-архив.
 //Сборку реализовать посредством вызова цели build.
 tasks.register('teamProject') {
