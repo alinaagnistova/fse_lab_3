@@ -201,8 +201,47 @@ tasks.register('musicProject') {
 //
 //}
 //
-////team - осуществляет получение из git-репозитория 3 предыдущих ревизий, их сборку (по аналогии с основной) и упаковку получившихся jar-файлов в zip-архив.
-////Сборку реализовать посредством вызова цели build.
+//team - осуществляет получение из git-репозитория 3 предыдущих ревизий, их сборку (по аналогии с основной) и упаковку получившихся jar-файлов в zip-архив.
+//Сборку реализовать посредством вызова цели build.
+tasks.register('teamProject') {
+    description = 'Получение из git-репозитория 3 предыдущих ревизий, их сборка и упаковка jarников в zip'
+
+    doLast {
+        def revisions = []
+        def buildDir = file("${project.buildDir}/teamBuilds")
+
+        def gitLogOutput = 'git log -n 3 --pretty=format:%H'.execute().text
+        revisions = gitLogOutput.split("\n")
+
+        revisions.each { rev ->
+            println "Обрабатываем ревизию: ${rev}"
+            "git checkout ${rev}".execute().waitFor()
+            exec {
+                commandLine 'gradle', 'build'
+            }
+            copy {
+                from file("${project.buildDir}/libs")
+                into buildDir
+                include "*.jar"
+                rename { String fileName ->
+                    fileName.replace('.jar', "-${rev}.jar")
+                }
+            }
+        }
+        'git checkout @{-1}'.execute().waitFor()
+    }
+}
+
+tasks.register('zipRevisions', Zip) {
+    archiveFileName = 'teamBuilds.zip'
+    destinationDirectory = file("${project.buildDir}")
+    from file("${project.buildDir}/teamBuilds")
+}
+
+tasks.named('teamProject').configure {
+    finalizedBy tasks.named('zipRevisions')
+}
+
 ////diff - осуществляет проверку состояния рабочей копии, и, если изменения не касаются классов, указанных в файле параметров выполняет commit в репозиторий git.
 ////history - если проект не удаётся скомпилировать (цель compile), загружается предыдущая версия из репозитория git.
 ////Операция повторяется до тех пор, пока проект не удастся собрать, либо не будет получена самая первая ревизия из репозитория.
