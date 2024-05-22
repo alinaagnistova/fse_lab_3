@@ -291,11 +291,6 @@ tasks.register('diffProject') {
     doLast {
 //        def checkoutCommand = 'git checkout origin/master'.execute()
 //        checkoutCommand.waitFor()
-//
-//        if (checkoutCommand.exitValue() != 0) {
-//            println "Ошибка при переключении на ветку origin/master: ${checkoutCommand.err.text}"
-//            return
-//        }
         def forbiddenClasses = file('lol_classes.txt').readLines().collect { it.trim() }
         def gitDiff = 'git diff --name-only'.execute().text.trim().split('\n')
 
@@ -304,7 +299,6 @@ tasks.register('diffProject') {
                 file.endsWith("${forbiddenClass}.java")
             }
         }
-
         if (forbiddenChanges) {
             println "Изменения затрагивают запрещенные классы. Коммит невозможен."
         } else {
