@@ -284,7 +284,43 @@ tasks.named('teamProject').configure {
     finalizedBy tasks.named('zipRevisions')
 }
 
-////diff - осуществляет проверку состояния рабочей копии, и, если изменения не касаются классов, указанных в файле параметров выполняет commit в репозиторий git.
+//diff - осуществляет проверку состояния рабочей копии, и, если изменения не касаются классов, указанных в файле параметров выполняет commit в репозиторий git.
+tasks.register('diffProject') {
+    description = 'Проверяет состояние рабочей копии и, если изменения не касаются классов из lol_classes.txt, выполняет commit'
+
+    doLast {
+//        def checkoutCommand = 'git checkout origin/master'.execute()
+//        checkoutCommand.waitFor()
+//
+//        if (checkoutCommand.exitValue() != 0) {
+//            println "Ошибка при переключении на ветку origin/master: ${checkoutCommand.err.text}"
+//            return
+//        }
+        def forbiddenClasses = file('lol_classes.txt').readLines().collect { it.trim() }
+        def gitDiff = 'git diff --name-only'.execute().text.trim().split('\n')
+
+        def forbiddenChanges = gitDiff.any { file ->
+            forbiddenClasses.any { forbiddenClass ->
+                file.endsWith("${forbiddenClass}.java")
+            }
+        }
+
+        if (forbiddenChanges) {
+            println "Изменения затрагивают запрещенные классы. Коммит невозможен."
+        } else {
+            'git add .'.execute().waitFor()
+            def commitCommand = 'git commit -m "кек"'.execute()
+            commitCommand.waitFor()
+
+            if (commitCommand.exitValue() == 0) {
+                println "Ура омг все получилось"
+            } else {
+                println "Ошибка при выполнении коммита: ${commitCommand.err.text}"
+            }
+        }
+    }
+}
+
 ////history - если проект не удаётся скомпилировать (цель compile), загружается предыдущая версия из репозитория git.
 ////Операция повторяется до тех пор, пока проект не удастся собрать, либо не будет получена самая первая ревизия из репозитория.
 ////Если такая ревизия найдена, то формируется файл, содержащий результат операции diff для всех файлов, измёненных в ревизии, следующей непосредственно за последней работающей.
